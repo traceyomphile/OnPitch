@@ -1,11 +1,24 @@
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Connection;
 
 
 public class Main {
+    private static Connection connection;
+    private static ManageUser manageUser;
+    private static BufferedReader reader;
 
-    private static boolean strongPassword(String password) {
+    public Main(Connection conn, BufferedReader br) {
+        connection = conn;
+        reader = br;
+
+        // Create the users table if it doesn't exist
+        DBConnection.createUserTable(connection);
+        manageUser = new ManageUser(connection);
+    }
+
+    private boolean strongPassword(String password) {
         // Check if the password is at least 8 characters long
         if (password.length() < 8) {
             return false;
@@ -29,9 +42,9 @@ public class Main {
         return password.matches(".*[!@#$%^&*()].*");
     }
 
-    private static void signUp(BufferedReader reader) {
-        System.out.println("SignUp\n");
-        System.out.println("Enter your email:");
+    private void signUp() {
+        System.out.println("======SIGN UP======");
+        System.out.println("\nEnter your email:");
         String email;
         String name;
         String password;
@@ -40,7 +53,7 @@ public class Main {
         try {
             email = reader.readLine();
 
-            if (ManageUser.userExists(email)) {
+            if (!manageUser.isUsersTableEmpty() && manageUser.userExists(email)) {
                 System.out.println("User with this email already exists. Please log in.");
                 return;
             }
@@ -64,18 +77,18 @@ public class Main {
                 return;
             }
 
-            ManageUser.createUser(name, email, password, role);
+            manageUser.createUser(name, email, password, role);
 
             System.out.println("User created successfully! Automatically logging in...\n");
-            logIn(reader);
+            logIn();
         } catch (IOException e) {
             System.out.println("ERROR: " + e.getMessage());
         }
     }
 
-    private static void logIn(BufferedReader reader) {
-        System.out.println("LogIn\n");
-        System.out.println("Enter your email:");
+    private void logIn() {
+        System.out.println("======LOG IN======");
+        System.out.println("\nEnter your email:");
         String email = null;
         String password = null;
 
@@ -87,30 +100,48 @@ public class Main {
             System.out.println("ERROR: " + e.getMessage());
         }
 
-        if (ManageUser.validateUser(email, password)) {
+        if (manageUser.validateUser(email, password)) {
             System.out.println("Successfully logged in!");
         } else {
             System.out.println("Invalid email or password.");
         }
     }
 
-    public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(System.in))) {
-            System.out.println("Welcome to OnPitch!\n");
+    private String readInput() {
+        String input = null;
+        try {
+            input = reader.readLine();
+        } catch (IOException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
 
-            System.out.println("LogIn or SignUp:");
-            String userInput = reader.readLine();
+        while (input == null || input.trim().isEmpty()) {
+            System.out.println("Input cannot be empty. Please try again.");
+            input = readInput(); // Recursively prompt for input again
+        }
+        return input;
+    }
+    public static void main(String[] args) {
+        // Connect to DB
+        try (Connection conn = DBConnection.getConnection();
+             BufferedReader br = new BufferedReader(new java.io.InputStreamReader(System.in))) {
+            
+            // Initialize Main with the connection and reader
+            Main mainApp = new Main(conn, br);
+
+            System.out.println("======WELCOME TO ONPITCH======");
+
+            System.out.println("\nEnter 'LogIn' or 'SignUp':");
+            String userInput = mainApp.readInput();
 
             if (userInput.equalsIgnoreCase("SignUp")) {
-                signUp(reader);
+                mainApp.signUp();
             } else if (userInput.equalsIgnoreCase("LogIn")) {
-                logIn(reader);
+                mainApp.logIn();
             } else {
                 System.out.println("Invalid input. Please enter 'LogIn' or 'SignUp'.");
             }
-
-            reader.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
         }
 

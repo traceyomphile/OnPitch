@@ -1,2 +1,4 @@
 src/CONFIG.java
 *.class
+/Database/
+/lib/
