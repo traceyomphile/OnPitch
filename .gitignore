@@ -1,6 +1,10 @@
 backend/src/CONFIG.java
 *.class
-backend/Database/
+Database/
 frontend/node_modules/
 *.json
 *.ts
+frontend/dist/
+*.tsbuildinfo
+*.js
+

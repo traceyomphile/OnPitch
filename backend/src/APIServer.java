@@ -1,10 +1,10 @@
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -136,7 +136,7 @@ public class APIServer {
             if (inputStream == null) {
                 return new HashMap<>();
             }
-            String body = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8).trim();
             return parseSimpleJson(body);
         } catch (Exception e) {
             return new HashMap<>();
@@ -155,7 +155,7 @@ public class APIServer {
     private static void sendJson(HttpExchange exchange, int statusCode, Map<String, Object> body) throws IOException {
         addCorsHeaders(exchange);
         String json = toJson(body);
-        byte[] bytes = json.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(statusCode, bytes.length);
         try (OutputStream outputStream = exchange.getResponseBody()) {

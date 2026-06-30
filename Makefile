@@ -11,7 +11,7 @@ BACKEND_LIB := backend/lib/h2-2.4.240.jar
 CLASSPATH := $(BACKEND_BIN):$(BACKEND_LIB)
 
 # EDIT ME: fully-qualified name of the class with `public static void main`
-MAIN_CLASS := backend.src.APIServer
+MAIN_CLASS := APIServer
 
 .PHONY: help install build build-backend build-frontend \
         run-backend run-frontend dev clean
