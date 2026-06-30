@@ -1,8 +1,8 @@
 JAVAC = javac
 JAVA = java
-SRC = src/*.java
-BIN = bin
-LIB = lib/h2-2.4.240.jar
+SRC = backend/src/*.java
+BIN = backend/bin
+LIB = backend/lib/h2-2.4.240.jar
 MAIN = Main
 
 $(BIN):

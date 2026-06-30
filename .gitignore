@@ -1,4 +1,4 @@
-src/CONFIG.java
+backend/src/CONFIG.java
 *.class
-/Database/
-/lib/
+backend/Database/
+backend/lib/
