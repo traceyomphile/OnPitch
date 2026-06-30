@@ -33,7 +33,7 @@ install:
 # Compile every .java file under backend/src into backend/build,
 # preserving package directory structure.
 build-backend: 
-    mkdir -p $(BACKEND_BIN)
+	mkdir -p $(BACKEND_BIN)
 	$(JAVAC) -d $(BACKEND_BIN) -cp $(BACKEND_LIB) $(BACKEND_SRC)
 
 build-frontend:
