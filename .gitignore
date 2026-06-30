@@ -2,3 +2,5 @@ backend/src/CONFIG.java
 *.class
 backend/Database/
 backend/lib/
+*.json
+*.ts
